@@ -13,9 +13,15 @@ brew install emscripten
 cd src
 ```
 
-3. Run the compiler:
+3. Run the compiler.
+To include in plain JS:
 ```
 em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS=_malloc,_free,_facedetect_cnn
+```
+
+If you want to include in a TypeScript project, compile as a Module:
+```
+em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS='["_malloc","_free","_facedetect_cnn"]' -s EXPORTED_RUNTIME_METHODS='["cwrap", "ccall"]' -s MODULARIZE=1 -s EXPORT_NAME='createModule'
 ```
 
 4. Take the facedetection.js and facedetection.wasm and put in your project. You can see a sample implementation in https://github.com/yembo/libfacedetection-wasm
