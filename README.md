@@ -1,3 +1,27 @@
+## Yembo notes
+
+To cross-compile this for browsers with emscripten:
+
+1. Make sure you have [Emscripten] installed. On a Mac with Homebrew installed, you can simply run:
+
+```
+brew install emscripten
+```
+
+2. Go to the source folder:
+```
+cd src
+```
+
+3. Run the compiler:
+```
+em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS=_malloc,_free,_facedetect_cnn
+```
+
+4. Take the facedetection.js and facedetection.wasm and put in your project. You can see a sample implementation in https://github.com/yembo/libfacedetection-wasm
+
+Original README.md follows.
+
 # libfacedetection
 
 This is an open source library for CNN-based face detection in images. The CNN model has been converted to static variables in C source files. The source code does not depend on any other libraries. What you need is just a C++ compiler. You can compile the source code under Windows, Linux, ARM and any platform with a C++ compiler.
