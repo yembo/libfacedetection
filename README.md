@@ -2,7 +2,7 @@
 
 To cross-compile this for browsers with emscripten:
 
-1. Make sure you have [Emscripten] installed. On a Mac with Homebrew installed, you can simply run:
+1. Make sure you have [Emscripten](https://emscripten.org/) installed. On a Mac with Homebrew installed, you can simply run:
 
 ```
 brew install emscripten
