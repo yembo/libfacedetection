@@ -14,15 +14,45 @@ cd src
 ```
 
 3. Run the compiler.
-To include in plain JS:
+To include in plain JS for use in a simple static HTML page:
 ```
 em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS=_malloc,_free,_facedetect_cnn
 ```
 
-If you want to include in a TypeScript project, compile as a Module:
+If you want to include in a React/Vite/Typescript project, the steps are more complicated:
+
 ```
-em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS='["_malloc","_free","_facedetect_cnn"]' -s EXPORTED_RUNTIME_METHODS='["cwrap", "ccall"]' -s MODULARIZE=1 -s EXPORT_NAME='createModule'
+em++ -O3 -s WASM=1 -msimd128 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 -s TOTAL_MEMORY=128MB -s MODULARIZE=1 -s NO_DISABLE_EXCEPTION_CATCHING  ./facedetectcnn.cpp ./facedetectcnn-data.cpp ./facedetectcnn-model.cpp -o facedetection.js -s EXPORTED_FUNCTIONS=_malloc,_free,_facedetect_cnn
 ```
+
+Delete facedetection.worker.js - this is a legacy unused file and it's just a comment anyway.
+
+Add line to top of facedetection.js output:
+
+```
+/ *eslint-disable  */
+```
+
+Replace the path to play nice with Vite in facedetection.js:
+
+Search for `"facedetection.wasm"` and replace with `"/wasm/facedetection.wasm"`
+
+Delete the exports
+
+```
+if (typeof exports === 'object' && typeof module === 'object')
+  module.exports = Module;
+else if (typeof define === 'function' && define['amd'])
+  define([], () => Module);
+```
+
+Add this to the bottom of the file:
+
+```
+export default Module;
+```
+
+If that is all very scary to you, go in `module` folder and take the files already set up to do this for you.
 
 4. Take the facedetection.js and facedetection.wasm and put in your project. You can see a sample implementation in https://github.com/yembo/libfacedetection-wasm
 
